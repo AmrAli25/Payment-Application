@@ -176,9 +176,3 @@ EN_terminalError_t isValidCardPAN(ST_cardData_t* cardData)
 		return INVALID_CARD;
 	}
 }
-
-
-
-
-
-
