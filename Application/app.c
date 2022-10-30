@@ -53,9 +53,8 @@ void appStart(void)
 	if (termReturn == EXPIRED_CARD)
 	{
 		printf("\n******* EXPIRED_CARD *******\n");
-		transData.cardHolderData = cardData;
-		transData.terminalData = termData;
-		saveTransaction(&transData);
+		printf("\n******* INTERNAL_SERVER_ERROR *******\n");
+
 		return;
 	}
 	termReturn = getTransactionAmount(&termData);
@@ -69,6 +68,7 @@ void appStart(void)
 	if (termReturn == EXCEED_MAX_AMOUNT)
 	{
 		printf("\n******* DECLINED EXCEED_MAX_AMOUNT *******\n");
+		printf("\n******* INTERNAL_SERVER_ERROR *******\n");
 		return;
 	}
 	transData.cardHolderData = cardData;
