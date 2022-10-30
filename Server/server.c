@@ -4,6 +4,7 @@
 ST_accountsDB_t accountsDB[255];
 ST_transaction_t transactionsDB[255] = { 0 };  // Initially with Zeros
 int index;
+float LASTBALANCE;
 
 void readingAccountDBfile(void)
 {
@@ -88,6 +89,7 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 	}
 	else if (isAmountAvailable(&transData->terminalData.transAmount,&accountsDB[index])== LOW_BALANCE)
 	{
+		LASTBALANCE = accountsDB[index].balance;
 		transData->transState = DECLINED_INSUFFECIENT_FUND;
 		return transData->transState;
 
@@ -100,6 +102,7 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 	else 
 	{
 		transData->transState = APPROVED;
+		LASTBALANCE = accountsDB[index].balance;
 		accountsDB[index].balance = accountsDB[index].balance - transData->terminalData.transAmount;
 	}
 	if (saveTransaction(transData) == SAVING_FAILED)
@@ -222,11 +225,14 @@ EN_serverError_t saveTransaction(ST_transaction_t* transData)
 	fprintf(file, "\n##########################################################\n");
 	fprintf(file, "Transaction Sequence Number: %d\n",transData->transactionSequenceNumber);
 	fprintf(file, "Transaction Date: %s\n", transData->terminalData.transactionDate);
+	fprintf(file, "Balance Amount: %0.1f\n", LASTBALANCE);
 	fprintf(file, "Transaction Amount: %0.1f\n", transData->terminalData.transAmount);
 	fprintf(file, "Transaction State: ");
 	if (transData->transState == APPROVED)
 	{
 		fprintf(file, "APPROVED\n");
+		fprintf(file, "NEW Balance Amount: %0.1f\n", accountsDB[index].balance);
+
 	}
 	else if (transData->transState == DECLINED_INSUFFECIENT_FUND)
 	{
